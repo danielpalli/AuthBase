@@ -1,0 +1,5 @@
+{
+    "global":{
+        "port": "process.env.PORT || 3010"
+    }
+}
