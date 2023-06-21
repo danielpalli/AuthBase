@@ -15,9 +15,11 @@ const registro = async (req, res) => {
         await nuevoUsuario.save();
         
         const { password:_, __v, ...data } = nuevoUsuario.toJSON();
+        const token = await generarJwt(data._id);
 
         res.json({
             data,
+            token
         });
     } catch (error) {
         handleHttpError(res, 'Error internal server', 500); 
