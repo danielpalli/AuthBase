@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 
 const { handleHttpError } = require("../utils/handleError");
 const Usuario = require('../models/Usuario');
+const { generarJwt }  = require('../utils/generarJwt');
 
 const registro = async (req, res) => {
     try {   
@@ -24,16 +25,21 @@ const registro = async (req, res) => {
 }
 
 const login = async (req, res) => {
+    
    try {
         const { correo, password } = req.body;
         const usuario = await Usuario.findOne({ correo });
 
-        if (!usuario) return handleHttpError(res, 'El usuario no existe', 401);
-        if (!bcrypt.compareSync(password, usuario.password)) return handleHttpError(res, 'La contraseña es incorrecta', 401);
+        if (!usuario) return handleHttpError(res, 'El usuario no existe', 400);
+        if (!usuario.cuentaActiva) return handleHttpError(res, 'El usuario esta inactivo', 400);
+        if (!bcrypt.compareSync(password, usuario.password)) return handleHttpError(res, 'La contraseña es incorrecta', 400);
 
+        const token = await generarJwt(usuario._id);
+        
         res.json({
             ok: true,
-            usuario: usuario
+            usuario,
+            token
         });
    } catch (error) {
         handleHttpError(res, 'Error internal server', 500); 

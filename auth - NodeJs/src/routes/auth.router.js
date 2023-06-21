@@ -13,6 +13,10 @@ router.post('/registro',[
     check('password', 'La contraseña es obligatoria y debe tener al menos 6 caracteres.').isLength({ min: 6 }),
     validarCampos
 ], registro);
-router.post('/login', login);
+router.post('/login',[
+    check('correo', 'El correo tiene que tener un formato valido.').isEmail(),
+    check('password', 'La contraseña es obligatoria y debe tener al menos 6 caracteres.').isLength({ min: 6 }),
+    validarCampos
+], login);
 
 module.exports = router;
